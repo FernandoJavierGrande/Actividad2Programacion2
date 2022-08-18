@@ -22,24 +22,41 @@ namespace Actividad2Programacion2
         private void b_persona_Click(object sender, EventArgs e)
         {
             persona = new Persona();
-
+            bool resp = false;
+            DateTime salida;
+            cambiarColor(false);
             try
             {
+                if (txt_nombre.Text.Equals(""))
+                {
+                    cambiarColor(false,txt_nombre);
+                    throw new Exception("El nombre no puede estar vacio");
+                }
                 persona.Nombre = txt_nombre.Text.Trim();
 
-                persona.FechaNacimineto = DateTime.Parse(txt_fechaNac.Text.Trim());
+                if (txt_dni.Text.Length < 7 || txt_dni.Text.Length > 8)
+                {
+                    cambiarColor(false, txt_dni);
+                    throw new Exception("El largo del Dni es incorrecto");
+                }
+                else
+                    persona.Dni = int.Parse(txt_dni.Text.Trim());
+ 
+                resp = DateTime.TryParse(txt_fechaNac.Text, out salida);
+                if (!resp)
+                {
+                    cambiarColor(false,txt_fechaNac);
+                    throw new Exception("La fecha es incorrecta");
+                }
 
-                persona.Dni = int.Parse(txt_dni.Text.Trim());
-
-                //Console.WriteLine(persona.FechaNacimineto.ToString());
+                persona.FechaNacimineto = salida;  
 
                 cambiarColor(true);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-                cambiarColor(false);
-                MessageBox.Show("Error en los datos a cargar");
+                
+                MessageBox.Show(ex.Message);
                 
             }
 
@@ -53,8 +70,8 @@ namespace Actividad2Programacion2
             }
             catch (Exception)
             {
-
-                throw new Exception("Ocurrio un error verifique las fechas");
+                cambiarColor(false,txt_fechaNac);
+                throw new Exception("Ocurrio un error verifique la fecha de nacimiento");
             }
             
         }
@@ -69,13 +86,30 @@ namespace Actividad2Programacion2
             }
             else
             {
-                color = Color.OrangeRed;
-                b_Edad.Enabled = false;
+                color = Color.White;
             }
 
             txt_dni.BackColor = color;  
             txt_fechaNac.BackColor = color;
             txt_nombre.BackColor = color;   
+
+        }
+        public void cambiarColor(bool booleano, TextBox txt)
+        {
+            Color color;
+
+            if (booleano == true)
+            {
+                color = Color.LightGreen;
+                b_Edad.Enabled = true;
+            }
+            else
+            {
+                color = Color.OrangeRed;
+                b_Edad.Enabled = false;
+            }
+
+            txt.BackColor = color;
 
         }
     }
